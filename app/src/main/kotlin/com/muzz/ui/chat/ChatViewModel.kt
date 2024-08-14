@@ -25,7 +25,16 @@ class ChatViewModel @AssistedInject constructor(
     private val mutableActiveUser = MutableStateFlow(user1)
     internal val activeUser = mutableActiveUser.asStateFlow()
 
+    private val mutableUserInput = MutableStateFlow("")
+    internal val userInput = mutableUserInput.asStateFlow()
+
     internal fun switchUser() {
         mutableActiveUser.value = if (activeUser.value == user1) user2 else user1
+
+        mutableUserInput.value = ""
+    }
+
+    internal fun userInput(value: String) {
+        mutableUserInput.value = value
     }
 }
