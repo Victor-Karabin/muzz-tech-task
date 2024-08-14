@@ -1,12 +1,16 @@
 package com.muzz.ui.chat
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel(assistedFactory = ChatViewModel.Factory::class)
 class ChatViewModel @AssistedInject constructor(
@@ -27,6 +31,9 @@ class ChatViewModel @AssistedInject constructor(
 
     private val mutableUserInput = MutableStateFlow("")
     internal val userInput = mutableUserInput.asStateFlow()
+
+    internal val enableSend = userInput.map { message -> message.isNotBlank() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
 
     internal fun switchUser() {
         mutableActiveUser.value = if (activeUser.value == user1) user2 else user1
