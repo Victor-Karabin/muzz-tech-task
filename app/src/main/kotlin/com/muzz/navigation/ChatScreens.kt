@@ -19,6 +19,7 @@ internal fun ChatScreen.toPath(): String {
     }
 }
 
+// can be extended with nav-params
 internal fun ChatScreen.toRoute(): String {
     return this.toPath() + when (this) {
         ChatScreen.Chat -> ""
@@ -27,7 +28,15 @@ internal fun ChatScreen.toRoute(): String {
 
 internal fun NavGraphBuilder.chatNavGraph(navController: NavController) {
     composable(route = ChatScreen.Chat.toRoute()) {
-        val viewModel = hiltViewModel<ChatViewModel>()
+        val user1 = "Sarah"
+        val user2 = "Andy"
+
+        val viewModel = hiltViewModel(
+            key = ChatViewModel::class.java.name + "#$user1#$user2",
+            creationCallback = { factory: ChatViewModel.Factory ->
+                factory.create(user1, user2)
+            }
+        )
 
         ChatScreen(
             modifier = Modifier.fillMaxSize(),
