@@ -44,4 +44,8 @@ class ChatViewModel @AssistedInject constructor(
     internal fun userInput(value: String) {
         mutableUserInput.value = value
     }
+
+    internal fun clickSend() {
+        mutableUserInput.value = ""
+    }
 }
