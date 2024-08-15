@@ -6,4 +6,5 @@
     <string name="common_belongs_photo">\'s photo</string>
 
     <string name="chat_switch_users">Switch users</string>
+    <string name="chat_send">Send</string>
 </resources>

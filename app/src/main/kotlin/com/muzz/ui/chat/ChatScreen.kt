@@ -2,6 +2,7 @@ package com.muzz.ui.chat
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -11,9 +12,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.muzz.ui.chat.components.ChatBottomBar
 import com.muzz.ui.chat.components.ChatTopBar
 import com.muzz.ui.theme.MuzzTheme
 
@@ -27,10 +30,15 @@ internal fun ChatScreen(
     val userInput by viewModel.userInput.collectAsStateWithLifecycle()
     val enableSend by viewModel.enableSend.collectAsStateWithLifecycle()
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     ChatScreen(
         modifier = modifier,
         userName = userName,
-        onClickBack = close,
+        onClickBack = {
+            keyboardController?.hide()
+            close()
+        },
         userInput = userInput,
         enableSend = enableSend,
         onChangeInput = viewModel::userInput,
@@ -66,6 +74,17 @@ private fun ChatScreen(
                         menuExpanded = false
                         onClickSwitchUser()
                     }
+                )
+            }
+        },
+        bottomBar = {
+            Surface(shadowElevation = 18.dp) {
+                ChatBottomBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    userInput = userInput,
+                    enabledSend = enableSend,
+                    onChangeUserInput = onChangeInput,
+                    onClickSend = onClickSend
                 )
             }
         }
