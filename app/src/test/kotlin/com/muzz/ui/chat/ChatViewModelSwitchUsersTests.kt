@@ -1,11 +1,17 @@
 package com.muzz.ui.chat
 
+import com.muzz.common.MainCoroutineRule
+import com.muzz.ui.chat.mock.ChatViewModelMockFactory
 import junit.framework.TestCase.assertEquals
+import org.junit.Rule
 import org.junit.Test
 
 class ChatViewModelSwitchUsersTests {
 
-    private val viewModel = ChatViewModelMockFactory.create(USER_1, USER_2)
+    @get:Rule
+    val mainCoroutineRule = MainCoroutineRule()
+
+    private val viewModel by lazy { ChatViewModelMockFactory.create(USER_1, USER_2) }
 
     @Test
     fun `given users when initial state then user1 is active`() {

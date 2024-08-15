@@ -1,10 +1,17 @@
 package com.muzz.ui.chat
 
+import com.muzz.common.MainCoroutineRule
+import com.muzz.ui.chat.mock.ChatViewModelMockFactory
 import junit.framework.TestCase.assertEquals
+import org.junit.Rule
 import org.junit.Test
 
 class ChatViewModelInputTests {
-    private val viewModel = ChatViewModelMockFactory.create()
+
+    @get:Rule
+    val mainCoroutineRule = MainCoroutineRule()
+
+    private val viewModel by lazy { ChatViewModelMockFactory.create() }
 
     @Test
     fun `given users when initial state then user input is empty`() {

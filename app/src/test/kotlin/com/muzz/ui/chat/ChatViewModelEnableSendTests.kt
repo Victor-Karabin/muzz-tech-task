@@ -1,6 +1,7 @@
 package com.muzz.ui.chat
 
 import com.muzz.common.MainCoroutineRule
+import com.muzz.ui.chat.mock.ChatViewModelMockFactory
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
