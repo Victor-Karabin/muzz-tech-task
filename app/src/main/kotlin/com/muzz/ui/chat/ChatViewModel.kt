@@ -1,21 +1,35 @@
 package com.muzz.ui.chat
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.muzz.common.Ticker
+import com.muzz.data.chat.MessageRepo
+import com.muzz.domain.Message
+import com.muzz.ui.chat.mappers.toItem
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = ChatViewModel.Factory::class)
 class ChatViewModel @AssistedInject constructor(
     @Assisted("user1") private val user1: String,
     @Assisted("user2") private val user2: String,
+    private val messageRepo: MessageRepo,
+    private val ticker: Ticker
 ) : ViewModel() {
 
     @AssistedFactory
@@ -26,6 +40,10 @@ class ChatViewModel @AssistedInject constructor(
         ): ChatViewModel
     }
 
+    private val unknownErrorChannel = Channel<Throwable>(capacity = Channel.BUFFERED)
+    internal val unknownError: Flow<Throwable>
+        get() = unknownErrorChannel.receiveAsFlow()
+
     private val mutableActiveUser = MutableStateFlow(user1)
     internal val activeUser = mutableActiveUser.asStateFlow()
 
@@ -34,6 +52,10 @@ class ChatViewModel @AssistedInject constructor(
 
     internal val enableSend = userInput.map { message -> message.isNotBlank() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
+
+    internal val items = messageRepo.subscribe().combine(activeUser) { messages, activeUser ->
+        messages.map { message -> message.toItem(activeUser) }.toImmutableList()
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = persistentListOf())
 
     internal fun switchUser() {
         mutableActiveUser.value = if (activeUser.value == user1) user2 else user1
@@ -46,6 +68,24 @@ class ChatViewModel @AssistedInject constructor(
     }
 
     internal fun clickSend() {
-        mutableUserInput.value = ""
+        viewModelScope.launch {
+            val message = Message(
+                id = "",
+                authorId = activeUser.value,
+                dateTime = ticker.currentDateTime(),
+                message = userInput.value.trim()
+            )
+
+            messageRepo.store(message)
+                .onSuccess { mutableUserInput.value = "" }
+                .onFailure { ex ->
+                    Log.d(TAG, "save message: $message failed", ex)
+                    unknownErrorChannel.send(ex)
+                }
+        }
+    }
+
+    private companion object {
+        private val TAG = ChatViewModel::class.java.name
     }
 }

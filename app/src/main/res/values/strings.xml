@@ -4,6 +4,7 @@
     <string name="common_back">Back</string>
     <string name="common_menu">Menu</string>
     <string name="common_belongs_photo">\'s photo</string>
+    <string name="common_error_occurred">Sorry, an error occurred. Please try again later.</string>
 
     <string name="chat_switch_users">Switch users</string>
     <string name="chat_send">Send</string>
