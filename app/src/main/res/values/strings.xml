@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Muzz-tech-task</string>
+
+    <string name="common_back">Back</string>
+    <string name="common_menu">Menu</string>
+    <string name="common_belongs_photo">\'s photo</string>
+
+    <string name="chat_switch_users">Switch users</string>
 </resources>

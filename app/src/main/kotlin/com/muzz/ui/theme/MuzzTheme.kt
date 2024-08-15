@@ -15,23 +15,44 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+// add dark color scheme
 private val darkColorScheme = darkColorScheme(
-    primary = Palette.Purple80,
-    secondary = Palette.PurpleGrey80,
-    tertiary = Palette.Pink80
+    primary = Palette.CeriseRed,
+    onPrimary = Palette.White,
+    primaryContainer = Palette.Fiord,
+    onPrimaryContainer = Palette.White,
+    secondary = Palette.CeriseRed,
+    onSecondary = Palette.White,
+    background = Palette.Fiord,
+    onBackground = Palette.White,
+    surface = Palette.WhiteLilac,
+    onSurface = Palette.Fiord,
+    error = Palette.CeriseRed,
+    onError = Palette.White,
+    tertiary = Palette.Bombay
 )
 
 private val lightColorScheme = lightColorScheme(
-    primary = Palette.Purple40,
-    secondary = Palette.PurpleGrey40,
-    tertiary = Palette.Pink40
+    primary = Palette.CeriseRed,
+    onPrimary = Palette.White,
+    primaryContainer = Palette.White,
+    onPrimaryContainer = Palette.Fiord,
+    secondary = Palette.CeriseRed,
+    onSecondary = Palette.White,
+    background = Palette.White,
+    onBackground = Palette.Fiord,
+    surface = Palette.WhiteLilac,
+    onSurface = Palette.Fiord,
+    error = Palette.CeriseRed,
+    onError = Palette.White,
+    tertiary = Palette.Bombay
 )
 
 @Composable
 internal fun MuzzTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -43,6 +64,7 @@ internal fun MuzzTheme(
         darkTheme -> darkColorScheme
         else -> lightColorScheme
     }
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -53,6 +75,8 @@ internal fun MuzzTheme(
     }
 
     MaterialTheme(
-        colorScheme = colorScheme, typography = Typography, content = content
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
     )
 }
