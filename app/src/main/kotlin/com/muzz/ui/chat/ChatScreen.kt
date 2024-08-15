@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,9 +27,11 @@ import com.muzz.ui.chat.components.ChatList
 import com.muzz.ui.chat.components.ChatTopBar
 import com.muzz.ui.chat.models.ChatItem
 import com.muzz.ui.common.SingleEventEffect
+import com.muzz.ui.common.keyboardAsState
 import com.muzz.ui.theme.MuzzTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 
@@ -110,9 +114,21 @@ private fun ChatScreen(
             }
         }
     ) { padding ->
+        val chatListState = rememberLazyListState()
+        val keyboard by keyboardAsState()
+
+        // scroll for the last item should be always visible
+        LaunchedEffect(items, keyboard) {
+            if (items.isNotEmpty()) {
+                delay(150)
+                chatListState.scrollToItem(items.lastIndex)
+            }
+        }
+
         ChatList(
             modifier = Modifier.padding(padding),
             items = items,
+            state = chatListState,
             contentPadding = PaddingValues(all = 8.dp)
         )
     }

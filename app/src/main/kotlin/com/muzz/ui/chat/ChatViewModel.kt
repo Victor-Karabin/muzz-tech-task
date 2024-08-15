@@ -56,7 +56,7 @@ class ChatViewModel @AssistedInject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
 
     internal val items = messageRepo.subscribe().combine(activeUser) { messages, activeUser ->
-        messages.toItems(TIME_ITEM_DELAY, activeUser, ticker.currentTimezone())
+        messages.toItems(TIME_ITEM_DELAY, FAST_MESSAGE_DELAY, activeUser, ticker.currentTimezone())
             .toImmutableList()
     }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = persistentListOf())
 
@@ -91,5 +91,6 @@ class ChatViewModel @AssistedInject constructor(
     private companion object {
         private val TAG = ChatViewModel::class.java.name
         private val TIME_ITEM_DELAY = 1.toDuration(DurationUnit.HOURS)
+        private val FAST_MESSAGE_DELAY = 20.toDuration(DurationUnit.SECONDS)
     }
 }

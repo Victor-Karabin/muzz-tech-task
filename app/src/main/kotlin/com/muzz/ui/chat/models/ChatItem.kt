@@ -17,4 +17,8 @@ internal sealed class ChatItem(open val id: String) {
         @Stable
         val dateTime: LocalDateTime
     ) : ChatItem(id)
+
+    internal data class SmallDivider(override val id: String) : ChatItem(id)
+
+    internal data class LargeDivider(override val id: String) : ChatItem(id)
 }

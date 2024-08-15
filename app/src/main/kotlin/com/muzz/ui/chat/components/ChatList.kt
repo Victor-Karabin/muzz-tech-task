@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,17 +24,21 @@ import java.util.UUID
 internal fun ChatList(
     items: ImmutableList<ChatItem>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues()
+    contentPadding: PaddingValues = PaddingValues(),
+    state: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding,
+        state = state,
         verticalArrangement = Arrangement.Bottom
     ) {
         items(count = items.size, key = { index: Int -> items[index].id }) { index: Int ->
             when (val item = items[index]) {
                 is ChatItem.DateTime -> DateTimeItem(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
                     item = item
                 )
 
@@ -39,9 +46,11 @@ internal fun ChatList(
                     modifier = Modifier.fillMaxWidth(),
                     item = item
                 )
-            }
 
-            if (index < items.lastIndex) Spacer(modifier = Modifier.height(8.dp))
+                is ChatItem.LargeDivider -> Spacer(modifier = Modifier.height(24.dp))
+
+                is ChatItem.SmallDivider -> Spacer(modifier = Modifier.height(8.dp))
+            }
         }
     }
 }
@@ -57,11 +66,23 @@ private fun PreviewChatListLight() {
         ChatItem.Message(
             id = UUID.randomUUID().toString(),
             isActiveUser = true,
-            message = "What are you up to today?"
+            message = "Hello!"
+        ),
+        ChatItem.SmallDivider(
+            id = UUID.randomUUID().toString()
         ),
         ChatItem.Message(
             id = UUID.randomUUID().toString(),
-            isActiveUser = false, message = "Nothing much"
+            isActiveUser = true,
+            message = "What are you up to today?"
+        ),
+        ChatItem.LargeDivider(
+            id = UUID.randomUUID().toString()
+        ),
+        ChatItem.Message(
+            id = UUID.randomUUID().toString(),
+            isActiveUser = false,
+            message = "Nothing much"
         )
     )
 
@@ -81,7 +102,18 @@ private fun PreviewChatListDark() {
         ChatItem.Message(
             id = UUID.randomUUID().toString(),
             isActiveUser = true,
+            message = "Hello!"
+        ),
+        ChatItem.SmallDivider(
+            id = UUID.randomUUID().toString()
+        ),
+        ChatItem.Message(
+            id = UUID.randomUUID().toString(),
+            isActiveUser = true,
             message = "What are you up to today?"
+        ),
+        ChatItem.LargeDivider(
+            id = UUID.randomUUID().toString()
         ),
         ChatItem.Message(
             id = UUID.randomUUID().toString(),
