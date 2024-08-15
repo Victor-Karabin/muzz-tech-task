@@ -40,7 +40,7 @@ internal fun MessageItem(
         modifier = modifier
             .clip(shape)
             .background(backgroundColor, shape)
-            .padding(4.dp)
+            .padding(8.dp)
     ) {
         Text(
             text = text,

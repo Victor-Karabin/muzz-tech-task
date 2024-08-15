@@ -7,21 +7,20 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
-internal fun Message.toDto(): MessageDto {
+internal fun Message.toDto(timeZone: TimeZone): MessageDto {
     return MessageDto(
         uid = this.id.toLongOrNull() ?: 0L,
         author = this.authorId,
         text = this.message,
-        createdAt = this.dateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+        createdAt = this.dateTime.toInstant(timeZone).toEpochMilliseconds()
     )
 }
 
-internal fun MessageDto.toModel(): Message {
+internal fun MessageDto.toModel(timeZone: TimeZone): Message {
     return Message(
         id = this.uid.toString(),
         authorId = this.author,
         message = this.text,
-        dateTime = Instant.fromEpochMilliseconds(this.createdAt)
-            .toLocalDateTime(TimeZone.currentSystemDefault())
+        dateTime = Instant.fromEpochMilliseconds(this.createdAt).toLocalDateTime(timeZone)
     )
 }

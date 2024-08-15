@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.muzz.common.Ticker
 import com.muzz.data.chat.MessageRepo
 import com.muzz.domain.Message
-import com.muzz.ui.chat.mappers.toItem
+import com.muzz.ui.chat.mappers.toItems
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -23,6 +23,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @HiltViewModel(assistedFactory = ChatViewModel.Factory::class)
 class ChatViewModel @AssistedInject constructor(
@@ -54,7 +56,8 @@ class ChatViewModel @AssistedInject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
 
     internal val items = messageRepo.subscribe().combine(activeUser) { messages, activeUser ->
-        messages.map { message -> message.toItem(activeUser) }.toImmutableList()
+        messages.toItems(TIME_ITEM_DELAY, activeUser, ticker.currentTimezone())
+            .toImmutableList()
     }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = persistentListOf())
 
     internal fun switchUser() {
@@ -87,5 +90,6 @@ class ChatViewModel @AssistedInject constructor(
 
     private companion object {
         private val TAG = ChatViewModel::class.java.name
+        private val TIME_ITEM_DELAY = 1.toDuration(DurationUnit.HOURS)
     }
 }

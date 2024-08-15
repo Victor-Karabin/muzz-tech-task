@@ -8,11 +8,11 @@ import javax.inject.Inject
 
 class TickerImpl @Inject constructor() : Ticker {
 
-    override fun currentTimestamp(): Long {
-        return System.currentTimeMillis()
+    override fun currentDateTime(): LocalDateTime {
+        return Clock.System.now().toLocalDateTime(currentTimezone())
     }
 
-    override fun currentDateTime(): LocalDateTime {
-        return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    override fun currentTimezone(): TimeZone {
+        return TimeZone.currentSystemDefault()
     }
 }
